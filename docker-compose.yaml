@@ -1,0 +1,37 @@
+# Main composition file for DHCP service
+# Author: Arthur Cadore M. Barcella
+# Github: arthurcadore
+
+version: '3.8'
+services:
+  # DHCP server service:
+  dhcpserver:
+    container_name: dhcpserver
+    hostname: dhcpserver
+    restart: always
+    network_mode: "host"
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - "./logs/:/var/lib/dhcp/"
+      - "./config/dhcpd.conf:/etc/dhcp/dhcpd.conf"
+      - "./config/dhcpd6.conf:/etc/dhcp/dhcpd6.conf"
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile-DHCP
+
+  # TFTP server service:
+  tftpserver:
+    container_name: tftpserver
+    hostname: tftpserver
+    restart: always
+    network_mode: "host"
+    ports:
+      - "514:514/udp"
+    volumes:
+      - "./share:/tftpshare"
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile-TFTP
+    env_file:
+      - ./env/.env_tftp
