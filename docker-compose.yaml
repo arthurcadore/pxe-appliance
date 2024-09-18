@@ -29,9 +29,21 @@ services:
     ports:
       - "514:514/udp"
     volumes:
-      - "./share:/tftpshare"
+      - "./shared:/tftpshare"
     build:
       context: .
       dockerfile: ./docker/Dockerfile-TFTP
     env_file:
       - ./env/.env_tftp
+
+  # PXE server service:
+  pxeserver:
+    container_name: pxeserver
+    hostname: pxeserver
+    restart: always
+    network_mode: "host"
+    volumes:
+      - "./shared:/tftpshare"
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile-PXE

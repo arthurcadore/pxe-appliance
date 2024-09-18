@@ -1,0 +1,19 @@
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get clean
+RUN apt-get install -y \
+            syslinux \
+            pxelinux \
+
+# Create TFTPshare directory:             
+RUN mkdir -p /tftpshare       
+
+# Copy files into it: 
+RUN cp /usr/lib/PXELINUX/pxelinux.0 /tftpshare
+RUN cp /usr/lib/syslinux/modules/bios/ldlinux.c32 /tftpshare
+RUN cp /usr/lib/syslinux/modules/bios/menu.c32 /tftpshare
+RUN cp /usr/lib/syslinux/modules/bios/libutil.c32 /tftpshare
+
+CMD ["tail", "-f," "/var/log/syslog"]
